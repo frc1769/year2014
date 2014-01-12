@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="com.windriver.ide.launch.ui.context.WRFlatCompositeLaunchContextSelectorMediatorPage">
+		<section name="com.windriver.ide.launch.ui.context.WRFlatCompositeLaunchContextSelectorMediatorPage$WRFlatCompositeLaunchContextSelectorControl">
+			<item value="false" key="FRC_UserProgram_StartupLibraryInit - SimpleTemplate.out - VxWorks6x_10.17.69.2.hideUnconnected"/>
+		</section>
+	</section>
+	<section name="com.windriver.ide.launch.ui.context.WRCompositeContextSelectorTab">
+		<section name="com.windriver.ide.launch.ui.tabs.vxworks.kerneltask.WRVxWorksKernelTaskConfiguratorMediatorPage">
+		</section>
+	</section>
+	<section name="WRVxWorksKernelTaskEntryPointSelectionDialog">
+	</section>
+</section>

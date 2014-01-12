@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="SYIspCalculatorDialog">
+	</section>
+	<section name="class com.windriver.ide.ui.staticanalysis.ispwizard.WRStoreGeneratedIncludesPage">
+	</section>
+	<section name="unchecked-vars">
+		<item value="false" key="show.inactiveIncludes"/>
+		<item value="true" key="hide.inactiveSystemIncludes"/>
+		<item value="false" key="hide.systemIncludes"/>
+		<item value="false" key="hide.followWorkspaceExternalIncludes"/>
+	</section>
+</section>

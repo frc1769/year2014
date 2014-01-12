@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="TargetConnectionDlg">
+		<item value="true" key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.TargetServerOptionsControl.STORE_OPTION_VERBOSE_ID"/>
+		<list key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.TargetServerOptionsControl.STORE_OPTIONS_ID">
+			<item value="-R C:/WindRiver/workspace -RW -Bt 3"/>
+		</list>
+		<section name="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage">
+			<section name="com.windriver.ide.target.ui.wizard.controls.tgtsvr.TargetServerBackendSelectionControl">
+				<item value="71" key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.WdbproxyTipcConnectionTypeConfigurationPanel.portInstance"/>
+				<item value="9600" key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.WdbserialBackendConfigurationPanel.selectedTTYSpeedRate.Windows 7"/>
+				<item value="0x4444" key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.wdbproxy.port"/>
+				<item value="70" key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.WdbproxyTipcConnectionTypeConfigurationPanel.portType"/>
+				<item value="" key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.WdbproxyTipcConnectionTypeConfigurationPanel.address"/>
+				<item value="" key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.WdbserialBackendConfigurationPanel.selectedTTYDevice.Windows 7"/>
+				<item value="wdbrpc" key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.TargetServerBackendSelectionControl.selectedBackendType"/>
+				<item value="UDP" key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.wdbproxy.type"/>
+				<item value="mpc52xx" key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.selectedProcessor.family"/>
+				<list key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.selectedProcessor">
+					<item value="MPC5200"/>
+				</list>
+				<list key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.portnumber">
+					<item value="2"/>
+				</list>
+				<list key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.wdbrpc..targetNameAddress">
+					<item value="10.17.69.2"/>
+				</list>
+				<list key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.busname">
+					<item value="plb_0"/>
+				</list>
+				<list key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.nodenumber">
+					<item value="1"/>
+				</list>
+				<list key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.wdbproxy.TCP.targetNameAddress">
+				</list>
+				<list key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.wdbproxy.UDP.targetNameAddress">
+				</list>
+				<list key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.wdbpipe.targetNameAddress">
+				</list>
+				<list key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.wdbproxy.targetNameAddress">
+				</list>
+			</section>
+			<section name="com.windriver.ide.target.ui.wizard.controls.vxworks.VxWorksKernelImageSelectionControl">
+				<item value="false" key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.KernelImageSelectionControl.filePathFromTargetButton.state"/>
+				<section name="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage">
+					<section name="com.windriver.ide.target.ui.wizard.controls.vxworks.VxWorksKernelImageSelectionControl$VxWorksKernelImageFileSelectionControl">
+						<list key="com.windriver.ide.target.ui.wizard.pages.vxworks.VxWorksWizardPage.SelectedKernelImageHistory">
+							<item value="C:/WindRiver/WPILib/cRIOFRCII_vxWorks"/>
+						</list>
+					</section>
+				</section>
+			</section>
+		</section>
+	</section>
+</section>
