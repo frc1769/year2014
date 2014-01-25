@@ -1,4 +1,8 @@
 #include "WPILib.h"
+#include "MecanumRobotDrive.h"
+#define K_p_init 0.01
+#define K_i_init 0.000009
+#define K_d_init 0.0005
 
 /**
  * This is a demo program showing the use of the RobotBase class.
@@ -18,11 +22,9 @@ class RobotDemo : public IterativeRobot
 	Joystick game_pad; // Game pad joystick
 	Joystick other_stick; // The stick for other control
 	Gyro robot_angle;
-	PIDController control_turn;
+	//PIDController control_turn;
 private:
-	double K_p;
-	double K_i;
-	double K_d;
+	
 	double x;
 	double y;
 	double turn;
@@ -51,13 +53,10 @@ public:
 		),	
 		game_pad(1),		// as they are declared above.
 		other_stick(2),
-		robot_angle(1),
-		control_turn(K_p,K_i,K_d,robot_angle,)
+		robot_angle(1)
+		//control_turn(K_p_init,K_i_init,K_d_init,&robot_angle,&robot_movement)
 	{
 		robot_angle.SetSensitivity(0.00673);
-		K_p = 0.01;
-		K_i = 0.000009;
-		K_d = 0.0005;
 		front_left.SetVoltageRampRate(100.0);
 		front_right.SetVoltageRampRate(100.0);
 		rear_left.SetVoltageRampRate(100.0);
