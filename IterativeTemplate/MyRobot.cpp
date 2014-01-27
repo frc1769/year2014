@@ -11,39 +11,41 @@
  */ 
 class RobotDemo : public IterativeRobot
 {
+	// Drive Motors
 	CANJaguar front_left;
 	CANJaguar front_right;
 	CANJaguar rear_left;
 	CANJaguar rear_right;
-	CANJaguar lift_ball_capture;
-	CANJaguar capture_ball;
-	CANJaguar throw_ball;
-	RobotDrive robot_movement; // robot drive system
-	Joystick game_pad; // Game pad joystick
-	Joystick other_stick; // The stick for other control
-	Gyro robot_angle;
-	//PIDController control_turn;
+	
+	CANJaguar lift_ball_capture; 	  // Lifts the Capture Mechanism
+	CANJaguar capture_ball; 		  // Pulls Ball In
+	CANJaguar throw_ball; 			  // Moves throwing arm
+	MecanumRobotDrive robot_movement; // robot drive system
+	Joystick game_pad;				  // Game pad joystick
+	Joystick other_stick; 			  // The stick for other control
+	Gyro robot_angle;				  // Decides angle of robot
+	PIDController control_turn; 	  // Determines the desired speed of rotation
 private:
 	
-	double x;
-	double y;
-	double turn;
-	double ball_capture_lift_speed;
-	bool capture;
-	bool uncapture;
-	bool throw_it;
-	bool un_throw_it;
-	double capture_speed;
-	double throw_speed;
+	double x;						  // left and right speed
+	double y;                         // Forward and backward speed
+	double turn; 
+	double ball_capture_lift_speed;   // Capture arm lift rate
+	bool capture; 					  // capture button on other_stick controller
+	bool uncapture; 				  // uncapture button on other_stick controller
+	bool throw_it; 					  // throw button on other_stick controller
+	bool un_throw_it; 	   			  // unthrow button on other_stick controller
+	double capture_speed; 			  // determines capture motor speed
+	double throw_speed;				  // determines throw motor speed
 public:
 	RobotDemo():
-		front_left(3),
-		front_right(14),
-		rear_left(4),
-		rear_right(2),
-		lift_ball_capture(5),
-		capture_ball(6),
-		throw_ball(7),
+		front_left(5),
+		front_right(7),
+		rear_left(6),
+		rear_right(8),
+		lift_ball_capture(4),
+		capture_ball(3),
+		throw_ball(2),
 		robot_movement
 		(
 			front_left, 
@@ -53,8 +55,8 @@ public:
 		),	
 		game_pad(1),		// as they are declared above.
 		other_stick(2),
-		robot_angle(1)
-		//control_turn(K_p_init,K_i_init,K_d_init,&robot_angle,&robot_movement)
+		robot_angle(1),
+		control_turn(K_p_init,K_i_init,K_d_init,&robot_angle,&robot_movement)
 	{
 		robot_angle.SetSensitivity(0.00673);
 		front_left.SetVoltageRampRate(100.0);
@@ -142,7 +144,7 @@ void RobotDemo::TeleopPeriodic() {
 	x = game_pad.GetRawAxis(3); 
 	y = game_pad.GetRawAxis(4);
 	ball_capture_lift_speed = other_stick.GetRawAxis(2);
-	robot_movement.MecanumDrive_Cartesian(x*0.9,y*0.9,turn,0); // drive with mecanum style
+	robot_movement.MecanumDrive_Cartesian_Gyro_Stabilized(x*0.9,y*0.9,0); // drive with mecanum style
 	lift_ball_capture.Set(ball_capture_lift_speed);
 	capture_ball.Set(capture_speed);
 	throw_ball.Set(throw_speed);
