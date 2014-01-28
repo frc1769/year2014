@@ -70,6 +70,8 @@ public:
 		robot_movement.SetExpiration(0.2);
 		robot_movement.SetInvertedMotor (RobotDrive::kFrontRightMotor, true);
 		robot_movement.SetInvertedMotor (RobotDrive::kRearRightMotor, true);
+		control_turn.SetSetpoint(0.0);
+		control_turn.Enable();
 		this->SetPeriod(0); 	//Set update period to sync with robot control packets (20ms nominal)
 	}
 	
