@@ -15,11 +15,9 @@ class MecanumRobotDrive: public PIDOutput, public RobotDrive
 		float stored_direction;
 		float gyroAngle_stored;
 	public:
-		MecanumRobotDrive(SpeedController *frontLeftMotor, SpeedController *rearLeftMotor,
-					SpeedController *frontRightMotor, SpeedController *rearRightMotor);
-		MecanumRobotDrive(SpeedController &frontLeftMotor, SpeedController &rearLeftMotor,
-					SpeedController &frontRightMotor, SpeedController &rearRightMotor);
-		virtual ~MecanumRobotDrive();
+		
+		MecanumRobotDrive::MecanumRobotDrive(SpeedController &frontLeftMotor, SpeedController &rearLeftMotor,
+			SpeedController &frontRightMotor, SpeedController &rearRightMotor);
 		
 		// PIDOutput interface
 		virtual void PIDWrite(float output);

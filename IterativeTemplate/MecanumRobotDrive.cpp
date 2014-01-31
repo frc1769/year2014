@@ -11,7 +11,12 @@
 
 #define max(x, y) (((x) > (y)) ? (x) : (y))
 
+MecanumRobotDrive::MecanumRobotDrive(SpeedController &frontLeftMotor, SpeedController &rearLeftMotor,
+			SpeedController &frontRightMotor, SpeedController &rearRightMotor) : 
+			RobotDrive(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor)
+{
 
+}
 
 /**
  * Drive method for Mecanum wheeled robots.
