@@ -116,45 +116,4 @@ void MecanumRobotDrive::MecanumDrive_Polar_Gyro_Stabilized(float magnitude, floa
 void MecanumRobotDrive::PIDWrite(float output)
 {
 	stored_rotation_value = output;
-	double wheelSpeeds[kMaxNumberOfMotors];
-	if (cartesian)
-	{
-		double xIn = stored_x_value;
-		double yIn = stored_y_value;
-		// Negate y for the joystick.
-		yIn = -yIn;
-		// Compenstate for gyro angle.
-		RotateVector(xIn, yIn, gyroAngle_stored);
-
-		wheelSpeeds[kFrontLeftMotor] = xIn + yIn + stored_rotation_value;
-		wheelSpeeds[kFrontRightMotor] = -xIn + yIn - stored_rotation_value;
-		wheelSpeeds[kRearLeftMotor] = -xIn + yIn + stored_rotation_value;
-		wheelSpeeds[kRearRightMotor] = xIn + yIn - stored_rotation_value;
-	} 
-	else
-	{
-
-		// Normalized for full power along the Cartesian axes.
-		float magnitude = Limit(stored_magnitude) * sqrt(2.0);
-		// The rollers are at 45 degree angles.
-		double dirInRad = (stored_direction + 45.0) * 3.14159 / 180.0;
-		double cosD = cos(dirInRad);
-		double sinD = sin(dirInRad);
-
-		wheelSpeeds[kFrontLeftMotor] = sinD * magnitude + stored_rotation_value;
-		wheelSpeeds[kFrontRightMotor] = cosD * magnitude - stored_rotation_value;
-		wheelSpeeds[kRearLeftMotor] = cosD * magnitude + stored_rotation_value;
-		wheelSpeeds[kRearRightMotor] = sinD * magnitude - stored_rotation_value;
-	}
-	
-	Normalize(wheelSpeeds);
-
-	uint8_t syncGroup = 0x80;
-
-	m_frontLeftMotor->Set(wheelSpeeds[kFrontLeftMotor] * m_invertedMotors[kFrontLeftMotor] * m_maxOutput, syncGroup);
-	m_frontRightMotor->Set(wheelSpeeds[kFrontRightMotor] * m_invertedMotors[kFrontRightMotor] * m_maxOutput, syncGroup);
-	m_rearLeftMotor->Set(wheelSpeeds[kRearLeftMotor] * m_invertedMotors[kRearLeftMotor] * m_maxOutput, syncGroup);
-	m_rearRightMotor->Set(wheelSpeeds[kRearRightMotor] * m_invertedMotors[kRearRightMotor] * m_maxOutput, syncGroup);
-
-	CANJaguar::UpdateSyncGroup(syncGroup);
 }

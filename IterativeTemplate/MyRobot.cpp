@@ -44,13 +44,18 @@ public:
 		myRobot.SetInvertedMotor (RobotDrive::kFrontRightMotor, true);
 		myRobot.SetInvertedMotor (RobotDrive::kRearRightMotor, true);
 		control_turn.SetSetpoint(0.0);
-		//control_turn.Enable();
+		control_turn.SetContinuous();
+		control_turn.SetOutputRange(-1.0,1.0);
+		set_angle = 0.0;
+		control_turn.Enable();
 		this->SetPeriod(0); 	//Set update period to sync with robot control packets (20ms nominal)
 	}
 	
 private:
 	float x;
 	float y;
+	float z;
+	float z_stick;
 	double turn; 
 	double ball_capture_lift_speed;   // Capture arm lift rate
 	bool capture; 					  // capture button on other_stick controller
@@ -59,6 +64,10 @@ private:
 	bool un_throw_it; 	   			  // unthrow button on other_stick controller
 	double capture_speed; 			  // determines capture motor speed
 	double throw_speed;				  // determines throw motor speed
+	double set_angle; 
+	double stored_time; 
+	double time_diff;
+	double new_time; 
 	
 /**
  * Robot-wide initialization code should go here.
@@ -67,6 +76,7 @@ private:
  * be called when the robot is first powered on.  It will be called exactly 1 time.
  */
 void RobotDemo::RobotInit() {
+	set_angle = 0.0;
 }
 
 /**
@@ -112,6 +122,7 @@ void RobotDemo::AutonomousPeriodic() {
  * the robot enters teleop mode.
  */
 void RobotDemo::TeleopInit() {
+	stored_time = Timer::GetPPCTimestamp();
 }
 
 /**
@@ -122,19 +133,34 @@ void RobotDemo::TeleopInit() {
  */
 void RobotDemo::TeleopPeriodic() {
 	throw_it = other_stick.GetRawButton(1);
-	un_throw_it = other_stick.GetRawButton(4);
-	capture = other_stick.GetRawButton(2);
+	un_throw_it = other_stick.GetRawButton(2);
+	capture = other_stick.GetRawButton(3);
 	uncapture = other_stick.GetRawButton(5);
-	throw_speed = throw_it ? 1.0 : (un_throw_it ? -0.4 : 0);
+	throw_speed = throw_it ? -1.0 : (un_throw_it ? 0.4 : 0);
 	capture_speed = capture ? 1.0 : (uncapture ? -1.0 : 0);
 	ball_capture_lift_speed = other_stick.GetRawAxis(2);
 	lift_ball_capture.Set(ball_capture_lift_speed);
 	capture_ball.Set(capture_speed);
 	throw_ball.Set(throw_speed);
-	x = stick.GetRawAxis(3);
-	y = stick.GetRawAxis(4);
-	myRobot.MecanumDrive_Cartesian(x,y,0.0);
-	//myRobot.ArcadeDrive(stick); // drive with arcade style 
+	x = stick.GetRawAxis(1);
+	y = stick.GetRawAxis(2);
+	z_stick = stick.GetRawAxis(3);
+	if (z_stick > 0.1)
+	{
+		z = 0.5 * (z_stick - 0.1); 
+	} else if (z_stick > -0.1)
+	{
+		z = 0.0;
+	} else
+	{
+		z = 0.5 * (z_stick + 0.1);
+	}
+	new_time = Timer::GetPPCTimestamp();
+	time_diff = new_time - stored_time;
+	stored_time = new_time;
+	set_angle += time_diff * z * 30.0;
+	control_turn.SetSetpoint(set_angle);
+	myRobot.MecanumDrive_Cartesian_Gyro_Stabilized(x,y,0.0);
 }
 
 /**
