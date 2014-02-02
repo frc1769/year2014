@@ -1,8 +1,12 @@
 #include "WPILib.h"
 #include "MecanumRobotDrive.h"
+#include <math.h>
 #define K_p_init 0.01
-#define K_i_init 0.000009
-#define K_d_init 0.0005
+#define K_i_init 0.000013
+#define K_d_init 0.005
+#define DEADBAND 0.1
+#define SCALE 0.5
+#define EXPON 2.0
 
 /**
  * This is a demo program showing the use of the RobotBase class.
@@ -46,6 +50,7 @@ public:
 		control_turn.SetSetpoint(0.0);
 		control_turn.SetContinuous();
 		control_turn.SetOutputRange(-1.0,1.0);
+		control_turn.SetAbsoluteTolerance(0.5);
 		set_angle = 0.0;
 		control_turn.Enable();
 		this->SetPeriod(0); 	//Set update period to sync with robot control packets (20ms nominal)
@@ -68,6 +73,10 @@ private:
 	double stored_time; 
 	double time_diff;
 	double new_time; 
+	double K_p;
+	double K_i;
+	double K_d;
+	Preferences * prefs;
 	
 /**
  * Robot-wide initialization code should go here.
@@ -77,6 +86,7 @@ private:
  */
 void RobotDemo::RobotInit() {
 	set_angle = 0.0;
+	prefs = Preferences::GetInstance();
 }
 
 /**
@@ -123,6 +133,7 @@ void RobotDemo::AutonomousPeriodic() {
  */
 void RobotDemo::TeleopInit() {
 	stored_time = Timer::GetPPCTimestamp();
+	// Add code here to reset PID
 }
 
 /**
@@ -132,6 +143,12 @@ void RobotDemo::TeleopInit() {
  * rate while the robot is in teleop mode.
  */
 void RobotDemo::TeleopPeriodic() {
+	K_p = prefs->GetFloat("K_p", 0.01);
+	K_i = prefs->GetFloat("K_i", 0.000013);
+	K_d = prefs->GetFloat("K_d", 0.005);
+
+	control_turn.SetPID(K_p, K_i, K_d);
+
 	throw_it = other_stick.GetRawButton(1);
 	un_throw_it = other_stick.GetRawButton(2);
 	capture = other_stick.GetRawButton(3);
@@ -145,22 +162,32 @@ void RobotDemo::TeleopPeriodic() {
 	x = stick.GetRawAxis(1);
 	y = stick.GetRawAxis(2);
 	z_stick = stick.GetRawAxis(3);
-	if (z_stick > 0.1)
+
+	if (z_stick > DEADBAND)
 	{
-		z = 0.5 * (z_stick - 0.1); 
-	} else if (z_stick > -0.1)
+		z = SCALE * pow(z_stick - DEADBAND + 0.0001, EXPON) / pow(1.0 - DEADBAND + 0.0001, EXPON); 
+	} 
+	else if (z_stick > -DEADBAND)
 	{
 		z = 0.0;
-	} else
+	} 
+	else
 	{
-		z = 0.5 * (z_stick + 0.1);
+		z = -SCALE * pow((-z_stick) - DEADBAND + 0.0001, EXPON) / pow(1.0 - DEADBAND + 0.0001, EXPON);
 	}
 	new_time = Timer::GetPPCTimestamp();
 	time_diff = new_time - stored_time;
+	if (time_diff > 0.05)
+	{
+		time_diff = 0.05;
+	}
 	stored_time = new_time;
-	set_angle += time_diff * z * 30.0;
+	set_angle += time_diff * z * 200.0;
 	control_turn.SetSetpoint(set_angle);
 	myRobot.MecanumDrive_Cartesian_Gyro_Stabilized(x,y,0.0);
+	SmartDashboard::PutNumber("Set Angle", set_angle);
+	SmartDashboard::PutNumber("Robot Angle", robot_angle.GetAngle());
+	SmartDashboard::PutNumber("Time Diff", time_diff);
 }
 
 /**
