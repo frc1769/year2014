@@ -133,7 +133,10 @@ void RobotDemo::AutonomousPeriodic() {
  */
 void RobotDemo::TeleopInit() {
 	stored_time = Timer::GetPPCTimestamp();
-	// Add code here to reset PID
+	// Code to reset PID
+	set_angle = 0.0;
+	control_turn.Reset();
+	robot_angle.Reset();
 }
 
 /**
