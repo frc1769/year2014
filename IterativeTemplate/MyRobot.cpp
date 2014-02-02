@@ -4,9 +4,9 @@
 #define K_p_init 0.01
 #define K_i_init 0.000013
 #define K_d_init 0.005
-#define DEADBAND 0.1
-#define SCALE 0.5
-#define EXPON 2.0
+#define DEADBAND 0.02
+#define SCALE 0.3
+#define EXPON 3.5
 
 /**
  * This is a demo program showing the use of the RobotBase class.
@@ -25,8 +25,8 @@ class RobotDemo : public IterativeRobot
 	MecanumRobotDrive myRobot; // robot drive system
 	Joystick stick; // only joystick
 	Joystick other_stick; 			  // The stick for other control
-	Gyro robot_angle;				  // Decides angle of robot
-	PIDController control_turn;
+	//Gyro robot_angle;				  // Decides angle of robot
+	//PIDController control_turn;
 
 public:
 	RobotDemo():
@@ -39,20 +39,20 @@ public:
 		rear_right(8),
 		myRobot(front_left, rear_left, front_right, rear_right),	// these must be initialized in the same order
 		stick(1),		// as they are declared above.
-		other_stick(2),
-		robot_angle(1),
-		control_turn(K_p_init,K_i_init,K_d_init,&robot_angle,&myRobot)
+		other_stick(2)
+		//robot_angle(1),
+		//control_turn(K_p_init,K_i_init,K_d_init,&robot_angle,&myRobot)
 	{
-		robot_angle.SetSensitivity(0.00673);
+		//robot_angle.SetSensitivity(0.00673);
 		myRobot.SetExpiration(0.1);
 		myRobot.SetInvertedMotor (RobotDrive::kFrontRightMotor, true);
 		myRobot.SetInvertedMotor (RobotDrive::kRearRightMotor, true);
-		control_turn.SetSetpoint(0.0);
-		control_turn.SetContinuous();
-		control_turn.SetOutputRange(-1.0,1.0);
-		control_turn.SetAbsoluteTolerance(0.5);
-		set_angle = 0.0;
-		control_turn.Enable();
+		//control_turn.SetSetpoint(0.0);
+		//control_turn.SetContinuous();
+		//control_turn.SetOutputRange(-1.0,1.0);
+		//control_turn.SetAbsoluteTolerance(0.5);
+		//set_angle = 0.0;
+		//control_turn.Enable();
 		this->SetPeriod(0); 	//Set update period to sync with robot control packets (20ms nominal)
 	}
 	
@@ -73,9 +73,12 @@ private:
 	double stored_time; 
 	double time_diff;
 	double new_time; 
+	double time_of_throw;
 	double K_p;
 	double K_i;
 	double K_d;
+	bool button_state_old;
+	bool button_state_new;
 	Preferences * prefs;
 	
 /**
@@ -117,8 +120,9 @@ void RobotDemo::AutonomousInit() {
 	stored_time = Timer::GetPPCTimestamp();
 	// Code to reset PID
 	set_angle = 0.0;
-	control_turn.Reset();
-	robot_angle.Reset();
+	//robot_angle.Reset();
+	//control_turn.Reset();
+	//control_turn.Enable();
 }
 
 /**
@@ -140,8 +144,12 @@ void RobotDemo::TeleopInit() {
 	stored_time = Timer::GetPPCTimestamp();
 	// Code to reset PID
 	set_angle = 0.0;
-	control_turn.Reset();
-	robot_angle.Reset();
+	//robot_angle.Reset();
+	//control_turn.Reset();
+	//control_turn.Enable();
+	button_state_old = false;
+	button_state_new = false;
+	
 }
 
 /**
@@ -155,9 +163,23 @@ void RobotDemo::TeleopPeriodic() {
 	K_i = prefs->GetFloat("K_i", 0.000013);
 	K_d = prefs->GetFloat("K_d", 0.005);
 
-	control_turn.SetPID(K_p, K_i, K_d);
+	//control_turn.SetPID(K_p, K_i, K_d);
 
-	throw_it = other_stick.GetRawButton(1);
+	button_state_new = other_stick.GetRawButton(1);
+/*	if (button_state_new == true && button_state_old == false)
+	{
+		time_of_throw = Timer::GetPPCTimestamp();
+		throw_it = true;
+	} else if (button_state_new = true && ((Timer::GetPPCTimestamp() - time_of_throw) < 0.05))
+	{
+		throw_it = true;
+	} else
+	{
+		throw_it = false;
+	}*/
+	//button_state_old = button_state_new;
+	throw_it = button_state_new;
+	
 	un_throw_it = other_stick.GetRawButton(2);
 	capture = other_stick.GetRawButton(3);
 	uncapture = other_stick.GetRawButton(5);
@@ -170,7 +192,7 @@ void RobotDemo::TeleopPeriodic() {
 	x = stick.GetRawAxis(1);
 	y = stick.GetRawAxis(2);
 	z_stick = stick.GetRawAxis(3);
-
+/*
 	if (z_stick > DEADBAND)
 	{
 		z = SCALE * pow(z_stick - DEADBAND + 0.0001, EXPON) / pow(1.0 - DEADBAND + 0.0001, EXPON); 
@@ -188,13 +210,14 @@ void RobotDemo::TeleopPeriodic() {
 	if (time_diff > 0.05)
 	{
 		time_diff = 0.05;
-	}
-	stored_time = new_time;
-	set_angle += time_diff * z * 200.0;
-	control_turn.SetSetpoint(set_angle);
-	myRobot.MecanumDrive_Cartesian_Gyro_Stabilized(x,y,0.0);
+	}*/
+	//stored_time = new_time;
+	//set_angle += time_diff * z * 200.0;
+	//control_turn.SetSetpoint(set_angle);
+	//myRobot.MecanumDrive_Cartesian_Gyro_Stabilized(x,y,0.0);
+	myRobot.MecanumDrive_Cartesian(x,y,z_stick,0.0);
 	SmartDashboard::PutNumber("Set Angle", set_angle);
-	SmartDashboard::PutNumber("Robot Angle", robot_angle.GetAngle());
+	//SmartDashboard::PutNumber("Robot Angle", robot_angle.GetAngle());
 	SmartDashboard::PutNumber("Time Diff", time_diff);
 }
 
