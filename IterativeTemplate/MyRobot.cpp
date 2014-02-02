@@ -114,6 +114,11 @@ void RobotDemo::DisabledPeriodic() {
  * the robot enters autonomous mode.
  */
 void RobotDemo::AutonomousInit() {
+	stored_time = Timer::GetPPCTimestamp();
+	// Code to reset PID
+	set_angle = 0.0;
+	control_turn.Reset();
+	robot_angle.Reset();
 }
 
 /**
