@@ -218,7 +218,7 @@ void RobotDemo::TeleopPeriodic() {
 	x = stick.GetRawAxis(1);
 	y = stick.GetRawAxis(2);
 	z_stick = stick.GetRawAxis(3);
-/*
+
 	if (z_stick > DEADBAND)
 	{
 		z = SCALE * pow(z_stick - DEADBAND + 0.0001, EXPON) / pow(1.0 - DEADBAND + 0.0001, EXPON); 
@@ -236,12 +236,12 @@ void RobotDemo::TeleopPeriodic() {
 	if (time_diff > 0.05)
 	{
 		time_diff = 0.05;
-	}*/
+	}
 	//stored_time = new_time;
 	//set_angle += time_diff * z * 200.0;
 	//control_turn.SetSetpoint(set_angle);
 	//myRobot.MecanumDrive_Cartesian_Gyro_Stabilized(x,y,0.0);
-	myRobot.MecanumDrive_Cartesian(x,y,z_stick,0.0);
+	myRobot.MecanumDrive_Cartesian(x,y,z,0.0);
 	SmartDashboard::PutNumber("Set Angle", set_angle);
 	SmartDashboard::PutNumber("Robot Angle", robot_angle.GetAngle());
 	SmartDashboard::PutNumber("Time Diff", time_diff);
