@@ -27,7 +27,7 @@ class RobotDemo : public IterativeRobot
 	Joystick other_stick; 			  // The stick for other control
 	Gyro robot_angle;				  // Decides angle of robot
 	PIDController control_turn;
-
+	DigitalInput ultrasonic_in;
 public:
 	RobotDemo():
 		lift_ball_capture(4),
@@ -41,7 +41,8 @@ public:
 		stick(1),		// as they are declared above.
 		other_stick(2),
 		robot_angle(1),
-		control_turn(K_p_init,K_i_init,K_d_init,&robot_angle,&myRobot)
+		control_turn(K_p_init,K_i_init,K_d_init,&robot_angle,&myRobot),
+		ultrasonic_in(1)
 	{
 		robot_angle.SetSensitivity(0.00673);
 		myRobot.SetInvertedMotor (RobotDrive::kFrontRightMotor, true);
@@ -78,7 +79,11 @@ private:
 	double K_d;
 	bool button_state_old;
 	bool button_state_new;
+	DigitalModule * dm;
 	Preferences * prefs;
+	I2C * prox;
+	uint8_t i2c_read_val;
+	Counter * m_counter;
 	
 /**
  * Robot-wide initialization code should go here.
@@ -87,6 +92,7 @@ private:
  * be called when the robot is first powered on.  It will be called exactly 1 time.
  */
 void RobotDemo::RobotInit() {
+	bool err;
 	set_angle = 0.0;
 	prefs = Preferences::GetInstance();
 	lift_ball_capture.SetExpiration(0.25);
@@ -97,6 +103,23 @@ void RobotDemo::RobotInit() {
 	front_right.SetExpiration(0.25);
 	rear_right.SetExpiration(0.25);
 	myRobot.SetExpiration(0.25);
+	dm = DigitalModule::GetInstance(1);
+	prox = dm->GetI2C(0x40);
+	err = prox->Write(0x3,0xFE);  // Enable pin 1 of the GPIO expander to be an output
+	if (err)
+	{
+		printf("Error in I2C write\n");
+	} else
+	{
+		printf("No error in I2C write\n");
+	}
+	
+	m_counter = new Counter(ultrasonic_in); // set up counter for this sensor
+	m_counter->SetMaxPeriod(1.0);
+	m_counter->SetSemiPeriodMode(true);
+	m_counter->SetSamplesToAverage(1);
+	m_counter->Reset();
+	m_counter->Start();
 }
 
 /**
@@ -241,10 +264,13 @@ void RobotDemo::TeleopPeriodic() {
 	//set_angle += time_diff * z * 200.0;
 	//control_turn.SetSetpoint(set_angle);
 	//myRobot.MecanumDrive_Cartesian_Gyro_Stabilized(x,y,0.0);
+	prox->Read(0x00,1,&i2c_read_val);
 	myRobot.MecanumDrive_Cartesian(x,y,z,0.0);
 	SmartDashboard::PutNumber("Set Angle", set_angle);
 	SmartDashboard::PutNumber("Robot Angle", robot_angle.GetAngle());
 	SmartDashboard::PutNumber("Time Diff", time_diff);
+	SmartDashboard::PutNumber("Proximity",i2c_read_val);
+	SmartDashboard::PutNumber("Distance Info:",m_counter->GetPeriod());
 }
 
 /**
